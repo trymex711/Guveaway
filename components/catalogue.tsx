@@ -1,10 +1,19 @@
 'use client';
-import {useState} from 'react';
+
+import { useState } from 'react';
 import Link from 'next/link';
-import {giveaways,money} from '@/lib/giveaways';
-import {Art} from './art';
-export function Catalogue(){
- const [category,setCategory]=useState('All giveaways'); const [query,setQuery]=useState('');
- const visible=giveaways.filter(g=>(category==='All giveaways'||g.category===category)&&(g.title+' '+g.description).toLowerCase().includes(query.toLowerCase()));
- return <section className="shell catalogue" id="giveaways"><div className="section-heading"><div><span className="eyebrow">A LITTLE CHANCE, A LOT TO LOVE</span><h2>Find your extraordinary.</h2></div><p>Big adventures. Everyday upgrades.<br/>Something with your name on it.</p></div><div className="filter-row"><div className="filters" role="group" aria-label="Giveaway categories">{['All giveaways','Adventure','Technology','Lifestyle'].map(c=><button key={c} aria-pressed={category===c} className={category===c?'active':''} onClick={()=>setCategory(c)}>{c}</button>)}</div><label className="search"><span className="sr-only">Search giveaways</span><input type="search" placeholder="Find your next good thing" value={query} onChange={e=>setQuery(e.target.value)}/><span aria-hidden="true">⌕</span></label></div><p className="result-count" aria-live="polite">{visible.length} demo giveaways to explore</p><div className="prize-grid">{visible.map(g=><article key={g.slug}><Link href={'/giveaways/'+g.slug} className={'card-art '+g.color} aria-label={'Explore '+g.title}><span className="tag">{g.category}</span><Art kind={g.art}/><span className="caption">{g.caption}</span><span className="arrow" aria-hidden="true">↗</span></Link><div className="card-copy"><div className="card-title"><h3><Link href={'/giveaways/'+g.slug}>{g.title}</Link></h3><span>{money(g.price)}<small>per entry</small></span></div><p>Prize value {money(g.value)} · Demo draw</p><progress value={g.sold} max={g.capacity} aria-label={g.title+' illustrative allocation'}/><div className="progress-label"><span>{Math.round(g.sold/g.capacity*100)}% allocated</span><span>{g.capacity.toLocaleString('en-GB')} total entries</span></div></div></article>)}</div>{visible.length===0?<div className="empty"><h3>No matches just yet.</h3><p>Try another search or category.</p><button className="button" onClick={()=>{setCategory('All giveaways');setQuery('');}}>Show all giveaways</button></div>:null}</section>
+import { giveaways, money } from '@/lib/giveaways';
+import { Art } from './art';
+
+export function Catalogue() {
+  const [category, setCategory] = useState('All');
+  const visible = giveaways.filter(g => category === 'All' || g.category === category);
+  return <section className="shell catalogue" id="giveaways">
+    <div className="section-heading"><div><span className="eyebrow">THE COLLECTION</span><h2>Extraordinary by nature.</h2></div><div className="filters" role="group" aria-label="Prize categories">{['All', 'Houses', 'Cars'].map(c => <button key={c} aria-pressed={category === c} className={category === c ? 'active' : ''} onClick={() => setCategory(c)}>{c}</button>)}</div></div>
+    <span className="sr-only" role="status">{visible.length} demo prizes</span>
+    <div className="prize-grid">{visible.map(g => <article className="prize-card" key={g.slug}>
+      <Link href={'/giveaways/' + g.slug} className="card-art" aria-label={'Discover ' + g.title}><Art kind={g.art} /><span className="tag">{g.category === 'Houses' ? 'THE RESIDENCE' : 'THE MOTOR COLLECTION'}</span><span className="image-note">Illustrative photography</span></Link>
+      <div className="card-copy"><div className="card-kicker"><span>{g.category === 'Houses' ? 'A NEW WAY OF LIVING' : 'MADE FOR THE JOURNEY'}</span><span>{g.category === 'Houses' ? '01' : '02'}</span></div><div className="card-title"><h3><Link href={'/giveaways/' + g.slug}>{g.title}</Link></h3><span>{money(g.price)}<small>per demo entry</small></span></div><p>{g.caption}</p><div className="card-meta"><span>Prize value <strong>{money(g.value)}</strong></span><Link href={'/giveaways/' + g.slug}>View prize <span aria-hidden="true">↗</span></Link></div></div>
+    </article>)}</div>
+  </section>;
 }

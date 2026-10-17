@@ -1,1 +1,6 @@
-export function Art({kind}:{kind:string}) { return <div className={'art art-'+kind} aria-hidden="true">{kind==='escape'?<><div className="sun"/><div className="hill back"/><div className="hill front"/><div className="villa"><i/><i/><i/></div><div className="pool"/></>:null}{kind==='studio'?<><div className="orb"/><div className="laptop"><div className="screen">make<br/><em>something.</em></div><div className="base"/></div></>:null}{kind==='coffee'?<><div className="machine"><div className="panel"/><div className="dial"/><div className="handle"/><div className="cup"/></div><div className="bean"/></>:null}</div> }
+import Image from 'next/image';
+
+export function Art({ kind, priority = false }: { kind: string; priority?: boolean }) {
+  const house = kind === 'residence';
+  return <div className="art"><Image src={house ? '/images/residence.jpg' : '/images/grand-tourer.jpg'} alt={house ? 'Contemporary residence with floor-to-ceiling windows and landscaped gardens' : 'Silver sports car on an open road'} fill sizes="(max-width: 700px) 100vw, 60vw" priority={priority} className={house ? 'residence-photo' : 'car-photo'} /></div>;
+}

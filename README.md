@@ -4,7 +4,7 @@ Standalone giveaway platform with no dependency on NEXUS.
 
 ## Implemented
 
-Responsive Next.js catalogue with category filters and search, static prize detail pages, and a browser-local demo basket. All prizes, prices, and allocation counts are illustrative. No payments, ticket issuance, or active draws are implemented. The existing Prisma schema is preserved.
+Premium house and car catalogue with simple category tabs, photographic prize detail pages, and a browser-local demo basket. All prizes, prices, and allocation counts are illustrative. No payments, ticket issuance, or active draws are implemented. The existing Prisma schema is preserved.
 
 ## Run
 
@@ -20,3 +20,6 @@ Next milestones: reviewed migrations and seed; verified user sessions and eligib
 
 The browser basket is untrusted input. Future checkout must validate quantities, prices, eligibility, availability, and rules on the server.
 Dependency audit: Prisma 6.19 tooling currently has transitive high-severity advisories. npm proposes a Prisma 7 major upgrade; this needs a separate database configuration migration and validation. Next.js was patched to 16.3.8 to resolve its reported advisories.
+
+
+Photography: illustrative Unsplash images, served locally. Residence image: https://images.unsplash.com/photo-1600585154340-be6161a56a0c . Car image: https://images.unsplash.com/photo-1503376780353-7e6692767b70 . These concept photos do not identify actual prizes.
