@@ -1,0 +1,2 @@
+'use client';
+export default function AdminError({reset}:{reset:()=>void}){return <section className="shell empty"><h1>The private office is unavailable.</h1><p>We couldn’t load the admin data. Check the database connection and try again.</p><button className="button" onClick={reset}>Try again</button></section>}

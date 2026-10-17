@@ -1,0 +1,5 @@
+import { requireAdmin } from '@/lib/admin-access';
+import { notFound } from 'next/navigation';
+import { db } from '@/lib/db';
+import { ListingEditor } from '@/components/listing-editor';
+export default async function EditListing({params}:{params:Promise<{id:string}>}){await requireAdmin();const {id}=await params;const item=await db.adminListing.findUnique({where:{id}});if(!item)notFound();const initial={id:item.id,slug:item.slug,title:item.title,category:item.category as 'Houses'|'Cars',description:item.description,caption:item.caption,price:item.price,value:item.value,capacity:item.capacity,max:item.max,imageUrl:item.imageUrl,imageAlt:item.imageAlt,status:item.status,revision:item.revision};return <><div className="admin-heading"><div><span className="eyebrow">REFINE THE DETAILS</span><h1>{item.title}</h1><p>Changes to a published listing appear on the website after saving.</p></div></div><ListingEditor initial={initial}/></>;}

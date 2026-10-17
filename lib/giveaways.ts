@@ -1,7 +1,7 @@
 export type Giveaway = {
   slug: string; title: string; category: 'Houses' | 'Cars'; description: string;
   price: number; value: number; sold: number; capacity: number; max: number;
-  art: string; color: string; caption: string;
+  art: string; color: string; caption: string; imageUrl?: string; imageAlt?: string;
 };
 
 export const giveaways: Giveaway[] = [

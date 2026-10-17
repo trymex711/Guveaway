@@ -4,6 +4,7 @@ generator client {
 datasource db {
  provider = "postgresql"
  url = env("DATABASE_URL")
+ directUrl = env("DIRECT_DATABASE_URL")
 }
 enum Role {
  USER
@@ -296,4 +297,97 @@ model RateLimit {
  key String @id
  hits Int @default(1)
  resetAt DateTime
+}
+
+// Better Auth identities are separate from future giveaway participant accounts.
+model AdminIdentity {
+ id String @id
+ name String
+ email String @unique
+ emailVerified Boolean @default(false)
+ image String?
+ role String @default("user")
+ banned Boolean @default(false)
+ banReason String?
+ banExpires DateTime?
+ createdAt DateTime @default(now())
+ updatedAt DateTime @updatedAt
+ sessions AdminSession[]
+ accounts AdminAccount[]
+}
+
+model AdminSession {
+ id String @id
+ token String @unique
+ userId String
+ expiresAt DateTime
+ ipAddress String?
+ userAgent String?
+ impersonatedBy String?
+ createdAt DateTime @default(now())
+ updatedAt DateTime @updatedAt
+ user AdminIdentity @relation(fields:[userId], references:[id], onDelete:Cascade)
+ @@index([userId])
+}
+
+model AdminAccount {
+ id String @id
+ accountId String
+ providerId String
+ userId String
+ accessToken String?
+ refreshToken String?
+ idToken String?
+ accessTokenExpiresAt DateTime?
+ refreshTokenExpiresAt DateTime?
+ scope String?
+ password String?
+ createdAt DateTime @default(now())
+ updatedAt DateTime @updatedAt
+ user AdminIdentity @relation(fields:[userId], references:[id], onDelete:Cascade)
+ @@index([userId])
+ @@unique([providerId,accountId])
+}
+
+model AdminVerification {
+ id String @id
+ identifier String
+ value String
+ expiresAt DateTime
+ createdAt DateTime @default(now())
+ updatedAt DateTime @updatedAt
+ @@index([identifier])
+}
+
+model AdminAuthRateLimit {
+ id String @id @default(cuid())
+ key String @unique
+ count Int
+ lastRequest Float
+}
+
+enum ListingStatus {
+ DRAFT
+ PUBLISHED
+ ARCHIVED
+}
+
+model AdminListing {
+ id String @id @default(cuid())
+ slug String @unique
+ title String
+ category String
+ description String
+ caption String
+ price Int
+ value Int
+ capacity Int
+ max Int
+ imageUrl String
+ imageAlt String
+ status ListingStatus @default(DRAFT)
+ revision Int @default(1)
+ createdAt DateTime @default(now())
+ updatedAt DateTime @updatedAt
+ @@index([status,createdAt])
 }

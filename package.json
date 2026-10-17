@@ -1,1 +1,40 @@
-{"name":"extraordinary-draws","version":"1.0.0","private":true,"scripts":{"dev":"next dev --port 3001","build":"prisma generate && next build","start":"next start --port 3001","db:migrate":"prisma migrate deploy","db:seed":"tsx prisma/seed.ts","test":"tsx --test tests/*.test.ts","test:integration":"tsx --test tests/integration/*.test.ts","typecheck":"tsc --noEmit","worker":"tsx scripts/worker.ts"},"dependencies":{"@prisma/client":"6.19.0","@radix-ui/react-slot":"^1.2.3","bcryptjs":"3.0.3","class-variance-authority":"^0.7.1","clsx":"^2.1.1","lucide-react":"^0.468.0","next":"16.3.8","react":"19.2.7","react-dom":"19.2.7","tailwind-merge":"^3.3.0","zod":"^4.1.0"},"devDependencies":{"@tailwindcss/postcss":"^4.1.0","@types/node":"^24.0.0","@types/react":"^19.0.0","@types/react-dom":"^19.0.0","prisma":"6.19.0","tailwindcss":"^4.1.0","tsx":"^4.20.0","typescript":"^5.9.0"}}
+{
+  "name": "extraordinary-draws",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --port 3001",
+    "build": "prisma generate && next build",
+    "start": "next start --port 3001",
+    "db:migrate": "prisma migrate deploy",
+    "db:seed": "tsx prisma/seed.ts",
+    "test": "tsx --test tests/*.test.ts",
+    "test:integration": "node --env-file=.env --import tsx --test tests/integration/*.test.ts",
+    "typecheck": "tsc --noEmit",
+    "worker": "tsx scripts/worker.ts"
+  },
+  "dependencies": {
+    "@prisma/client": "6.19.0",
+    "@radix-ui/react-slot": "^1.2.3",
+    "bcryptjs": "3.0.3",
+    "better-auth": "^1.7.10",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "lucide-react": "^0.468.0",
+    "next": "16.3.8",
+    "react": "19.2.7",
+    "react-dom": "19.2.7",
+    "tailwind-merge": "^3.3.0",
+    "zod": "^4.1.0"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.1.0",
+    "@types/node": "^24.0.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "prisma": "6.19.0",
+    "tailwindcss": "^4.1.0",
+    "tsx": "^4.20.0",
+    "typescript": "^5.9.0"
+  }
+}
