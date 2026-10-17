@@ -1,0 +1,5 @@
+import type { Metadata } from 'next';
+import Link from 'next/link';
+import './globals.css';
+export const metadata: Metadata = { title: 'Extraordinary Draws', description: 'A little chance. Something extraordinary. Giveaway platform demo.' };
+export default function Layout({children}: Readonly<{children: React.ReactNode}>) { return <html lang="en"><body><div className="banner">DEMO EXPERIENCE · Example prizes only · No payments or real entries</div><header className="shell"><Link className="brand" href="/"><span aria-hidden="true">✳</span><span>extraordinary<small>D R A W S</small></span></Link><nav aria-label="Main navigation"><Link href="/#giveaways">Explore giveaways</Link><Link href="/#how-it-works">How it works</Link><Link className="pill" href="/basket">Your basket ↗</Link></nav></header><main>{children}</main><footer className="shell"><div className="footer-brand">extraordinary draws<p>Good things start with a little possibility.</p></div><p>Independent giveaway platform · Demo experience<br/>18+ · Illustrative prizes and availability</p><Link href="/#how-it-works">How it works ↗</Link></footer></body></html> }

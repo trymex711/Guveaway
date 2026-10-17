@@ -1,0 +1,7 @@
+export type Giveaway = {slug:string; title:string; category:string; description:string; price:number; value:number; sold:number; capacity:number; max:number; art:string; color:string; caption:string};
+export const giveaways: Giveaway[] = [
+{slug:'the-great-escape',title:'The great escape',category:'Adventure',description:'Take the scenic route. A seven-night coastal escape for two, boutique accommodation, and a £1,000 travel allowance. This is an illustrative demo prize; no trip is being awarded.',price:250,value:450000,sold:1240,capacity:2000,max:20,art:'escape',color:'sand',caption:'A week away. A world of possibility.'},
+{slug:'your-next-big-idea',title:'Your next big idea',category:'Technology',description:'Make room for your next project. A premium laptop, wireless headphones, and a creative workspace allowance. Illustrative demo prize only.',price:150,value:320000,sold:810,capacity:1500,max:20,art:'studio',color:'lavender',caption:'Dream it. Make it. Make it yours.'},
+{slug:'a-little-everyday-luxury',title:'A little everyday luxury',category:'Lifestyle',description:'Slow mornings, excellent coffee. A home espresso machine, precision grinder, and a year of specialty coffee. Illustrative demo prize only.',price:100,value:180000,sold:960,capacity:1200,max:20,art:'coffee',color:'pink',caption:'Your morning ritual, reimagined.'}
+];
+export function money(pence:number) { return new Intl.NumberFormat('en-GB',{style:'currency',currency:'GBP',minimumFractionDigits:pence%100?2:0}).format(pence/100); }

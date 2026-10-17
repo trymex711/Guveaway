@@ -1,0 +1,2 @@
+import {Basket} from '@/components/basket';
+export default function BasketPage(){return <section className="shell basket-page"><span className="eyebrow">YOUR LITTLE POSSIBILITIES</span><h1>Your demo basket.</h1><Basket/></section>}

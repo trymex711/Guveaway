@@ -1,0 +1,299 @@
+generator client {
+ provider = "prisma-client-js"
+}
+datasource db {
+ provider = "postgresql"
+ url = env("DATABASE_URL")
+}
+enum Role {
+ USER
+ ADMIN
+}
+enum GiveawayStatus {
+ DRAFT
+ SCHEDULED
+ LIVE
+ GOAL_REACHED
+ CLOSED
+ DRAWING
+ COMPLETED
+ CANCELLED
+ GOAL_NOT_MET
+}
+enum PaymentStatus {
+ PENDING
+ PAID
+ FAILED
+ EXPIRED
+ REFUND_PENDING
+ REFUNDED
+ CHARGEBACK
+}
+enum TicketSource {
+ PURCHASE
+ COMPLIMENTARY
+}
+enum TicketStatus {
+ ELIGIBLE
+ REFUNDED
+ REVOKED
+}
+model User {
+ id String @id @default(cuid())
+ email String @unique
+ name String
+ passwordHash String
+ role Role @default(USER)
+ verifiedAt DateTime?
+ suspended Boolean @default(false)
+ country String
+ birthDate DateTime
+ notifications Boolean @default(true)
+ createdAt DateTime @default(now())
+ sessions Session[]
+ accounts Account[]
+ tokens AuthToken[]
+ orders Order[]
+ tickets Ticket[]
+ allocations TicketAllocation[] @relation("Recipient")
+ grants TicketAllocation[] @relation("Actor")
+ winners Winner[]
+}
+model Account {
+ id String @id @default(cuid())
+ userId String
+ provider String
+ providerAccountId String
+ user User @relation(fields:[userId], references:[id], onDelete:Cascade)
+ @@unique([provider,providerAccountId])
+}
+model Session {
+ id String @id
+ userId String
+ expiresAt DateTime
+ user User @relation(fields:[userId], references:[id], onDelete:Cascade)
+ @@index([userId])
+}
+model AuthToken {
+ id String @id
+ userId String
+ kind String
+ expiresAt DateTime
+ user User @relation(fields:[userId], references:[id], onDelete:Cascade)
+}
+model Giveaway {
+ id String @id @default(cuid())
+ slug String @unique
+ title String
+ category String
+ description String
+ value Int
+ ticketPrice Int
+ currency String @default("GBP")
+ goalType String @default("TICKETS")
+ goal Int
+ capacity Int
+ maxPerUser Int
+ minAge Int @default(18)
+ jurisdictions String[]
+ status GiveawayStatus @default(DRAFT)
+ opensAt DateTime
+ closesAt DateTime
+ drawMode String @default("MANUAL")
+ allowComplimentary Boolean @default(false)
+ allowExtension Boolean @default(false)
+ allowRepeatWinners Boolean @default(false)
+ isDemo Boolean @default(true)
+ featured Boolean @default(false)
+ frozenAt DateTime?
+ nextNumber Int @default(1)
+ createdAt DateTime @default(now())
+ images GiveawayImage[]
+ prizes Prize[]
+ rules GiveawayRulesVersion[]
+ orders Order[]
+ tickets Ticket[]
+ allocations TicketAllocation[]
+ draw Draw?
+ @@index([status,closesAt])
+}
+model GiveawayImage {
+ id String @id @default(cuid())
+ giveawayId String
+ url String
+ alt String
+ position Int @default(0)
+ giveaway Giveaway @relation(fields:[giveawayId],references:[id],onDelete:Restrict)
+}
+model Prize {
+ id String @id @default(cuid())
+ giveawayId String
+ title String
+ position Int
+ giveaway Giveaway @relation(fields:[giveawayId],references:[id],onDelete:Restrict)
+ winners Winner[]
+ @@unique([giveawayId,position])
+}
+model GiveawayRulesVersion {
+ id String @id @default(cuid())
+ giveawayId String
+ version Int
+ text String
+ createdAt DateTime @default(now())
+ giveaway Giveaway @relation(fields:[giveawayId],references:[id],onDelete:Restrict)
+ @@unique([giveawayId,version])
+}
+model Order {
+ id String @id @default(cuid())
+ userId String
+ giveawayId String
+ quantity Int
+ amount Int
+ currency String
+ status PaymentStatus @default(PENDING)
+ idempotencyKey String @unique
+ rulesVersion Int
+ expiresAt DateTime
+ createdAt DateTime @default(now())
+ user User @relation(fields:[userId],references:[id],onDelete:Restrict)
+ giveaway Giveaway @relation(fields:[giveawayId],references:[id],onDelete:Restrict)
+ payment Payment?
+ tickets Ticket[]
+ refund Refund?
+ @@index([giveawayId,status,expiresAt])
+ @@index([userId,createdAt])
+}
+model Payment {
+ id String @id @default(cuid())
+ orderId String @unique
+ provider String
+ externalId String @unique
+ amount Int
+ currency String
+ status PaymentStatus
+ createdAt DateTime @default(now())
+ order Order @relation(fields:[orderId],references:[id],onDelete:Restrict)
+}
+model WebhookEvent {
+ id String @id
+ bodyHash String
+ createdAt DateTime @default(now())
+}
+model Ticket {
+ id String @id @default(cuid())
+ giveawayId String
+ userId String
+ number Int
+ source TicketSource
+ status TicketStatus @default(ELIGIBLE)
+ orderId String?
+ allocationId String?
+ createdAt DateTime @default(now())
+ giveaway Giveaway @relation(fields:[giveawayId],references:[id],onDelete:Restrict)
+ user User @relation(fields:[userId],references:[id],onDelete:Restrict)
+ order Order? @relation(fields:[orderId],references:[id],onDelete:Restrict)
+ allocation TicketAllocation? @relation(fields:[allocationId],references:[id],onDelete:Restrict)
+ winner Winner?
+ @@unique([giveawayId,number])
+ @@index([userId,giveawayId])
+}
+model TicketAllocation {
+ id String @id @default(cuid())
+ actorId String
+ userId String
+ giveawayId String
+ quantity Int
+ reason String
+ idempotencyKey String @unique
+ createdAt DateTime @default(now())
+ actor User @relation("Actor",fields:[actorId],references:[id],onDelete:Restrict)
+ user User @relation("Recipient",fields:[userId],references:[id],onDelete:Restrict)
+ giveaway Giveaway @relation(fields:[giveawayId],references:[id],onDelete:Restrict)
+ tickets Ticket[]
+}
+model Draw {
+ id String @id @default(cuid())
+ giveawayId String @unique
+ actorId String
+ manifestHash String
+ algorithm String
+ proof Json
+ createdAt DateTime @default(now())
+ giveaway Giveaway @relation(fields:[giveawayId],references:[id],onDelete:Restrict)
+ snapshot DrawEligibilitySnapshot?
+ winners Winner[]
+}
+model DrawEligibilitySnapshot {
+ id String @id @default(cuid())
+ drawId String @unique
+ manifest Json
+ draw Draw @relation(fields:[drawId],references:[id],onDelete:Restrict)
+}
+model Winner {
+ id String @id @default(cuid())
+ drawId String
+ prizeId String
+ ticketId String @unique
+ userId String
+ claimHash String @unique
+ claimExpiresAt DateTime
+ claimedAt DateTime?
+ draw Draw @relation(fields:[drawId],references:[id],onDelete:Restrict)
+ prize Prize @relation(fields:[prizeId],references:[id],onDelete:Restrict)
+ ticket Ticket @relation(fields:[ticketId],references:[id],onDelete:Restrict)
+ user User @relation(fields:[userId],references:[id],onDelete:Restrict)
+ @@unique([drawId,prizeId])
+}
+model EmailNotification {
+ id String @id @default(cuid())
+ key String @unique
+ to String
+ template String
+ subject String
+ payload Json
+ status String @default("PENDING")
+ attempts Int @default(0)
+ availableAt DateTime @default(now())
+ leaseUntil DateTime?
+ lastError String?
+ providerId String?
+ sentAt DateTime?
+ createdAt DateTime @default(now())
+ attemptsLog EmailAttempt[]
+ @@index([status,availableAt])
+}
+model EmailAttempt {
+ id String @id @default(cuid())
+ notificationId String
+ result String
+ detail String?
+ createdAt DateTime @default(now())
+ notification EmailNotification @relation(fields:[notificationId],references:[id],onDelete:Restrict)
+}
+model AuditLog {
+ id String @id @default(cuid())
+ actorId String?
+ action String
+ entityId String
+ data Json
+ createdAt DateTime @default(now())
+ @@index([entityId,createdAt])
+}
+model Refund {
+ id String @id @default(cuid())
+ orderId String @unique
+ amount Int
+ reason String
+ status String @default("PENDING")
+ createdAt DateTime @default(now())
+ order Order @relation(fields:[orderId],references:[id],onDelete:Restrict)
+}
+model SystemConfiguration {
+ key String @id
+ value Json
+}
+model RateLimit {
+ key String @id
+ hits Int @default(1)
+ resetAt DateTime
+}

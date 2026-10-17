@@ -1,0 +1,10 @@
+'use client';
+import {useState} from 'react';
+import Link from 'next/link';
+import {BASKET_KEY,parseBasket} from '@/lib/basket';
+import {money} from '@/lib/giveaways';
+export function TicketPicker({slug,price,max}:{slug:string;price:number;max:number}) {
+ const [quantity,setQuantity]=useState(1); const [message,setMessage]=useState('');
+ function add(){try{const items=parseBasket(localStorage.getItem(BASKET_KEY));const existing=items.find(i=>i.slug===slug);if((existing?.quantity??0)+quantity>max){setMessage('Maximum '+max+' demo entries per prize. Your basket already has '+(existing?.quantity??0)+'.');return;}if(existing)existing.quantity+=quantity;else items.push({slug,quantity});localStorage.setItem(BASKET_KEY,JSON.stringify(items));setMessage(quantity+' demo entries added to your basket.');}catch{setMessage('Your browser could not save the basket. Enable local storage and try again.');}}
+ return <div className="ticket-picker"><label htmlFor="quantity">Choose your demo entries</label><div className="quantity-row"><button aria-label="Decrease entries" disabled={quantity<=1} onClick={()=>{setQuantity(q=>q-1);setMessage('');}}>−</button><input id="quantity" type="number" min={1} max={max} value={quantity} onChange={e=>{const n=Number(e.target.value);setQuantity(Number.isFinite(n)?Math.max(1,Math.min(max,Math.floor(n))):1);setMessage('');}}/><button aria-label="Increase entries" disabled={quantity>=max} onClick={()=>{setQuantity(q=>q+1);setMessage('');}}>+</button><strong>{money(price*quantity)}</strong></div><button className="button full" onClick={add}>Add to demo basket ↗</button><p role="status" className="feedback">{message}</p><Link className="text-link" href="/basket">View your basket →</Link><p className="fine-print">Maximum {max} demo entries per prize. No tickets are issued and no payment is taken.</p></div>
+}

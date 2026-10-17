@@ -1,0 +1,2 @@
+import Link from 'next/link';
+export default function NotFound(){return <section className="shell empty"><h1>This possibility is missing.</h1><p>We couldn’t find that page.</p><Link className="button" href="/">Explore the giveaways ↗</Link></section>}
