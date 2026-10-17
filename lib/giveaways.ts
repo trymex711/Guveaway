@@ -10,7 +10,7 @@ export const giveaways: Giveaway[] = [
     price: 1000, value: 125000000, sold: 18600, capacity: 50000, max: 20,
     art: 'residence', color: 'stone', caption: 'Four bedrooms. A new perspective.' },
   { slug: 'the-grand-tourer', title: 'The Grand Tourer', category: 'Cars',
-    description: 'For the love of the drive. A performance coupe with sculpted lines, a considered interior, and a road ahead full of possibility. An illustrative car prize for this platform preview; no vehicle is currently being awarded.',
+    description: 'For the love of the drive. A performance grand tourer with sculpted lines, a considered interior, and a road ahead full of possibility. An illustrative car prize for this platform preview; no vehicle is currently being awarded.',
     price: 500, value: 9500000, sold: 4200, capacity: 15000, max: 20,
     art: 'car', color: 'stone', caption: 'Exceptional design. Open-road freedom.' },
 ];
